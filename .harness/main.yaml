@@ -34,6 +34,9 @@ pipeline:
                                     image: bitnami/git:latest
                                     shell: Bash
                                     command: |-
+                                        apt-get update -y && apt-get install go -y
+                                        go install github.com/google/addlicense@latest
+
                                         set -x
                                         if [[ -d ".git" ]]; then
                                             rm -rf .git
