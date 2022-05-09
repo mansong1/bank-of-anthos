@@ -1,0 +1,14 @@
+inputSet:
+  identifier: "mainbranch"
+  pipeline:
+    identifier: "main"
+    properties:
+      ci:
+        codebase:
+          build:
+            type: "branch"
+            spec:
+              branch: "main"
+  name: "main-branch"
+  orgIdentifier: "default"
+  projectIdentifier: "Bank_of_Anthos"
