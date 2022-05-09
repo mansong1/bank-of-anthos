@@ -32,7 +32,7 @@ pipeline:
                                 spec:
                                     connectorRef: org.Dockerhub
                                     image: bitnami/git:latest
-                                    shell: Sh
+                                    shell: Bash
                                     command: |-
                                         set -x
                                         if [[ -d ".git" ]]; then
