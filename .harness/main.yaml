@@ -1,0 +1,47 @@
+pipeline:
+    name: main
+    identifier: main
+    projectIdentifier: Bank_of_Anthos
+    orgIdentifier: default
+    tags: {}
+    properties:
+        ci:
+            codebase:
+                connectorRef: org.Github
+                repoName: bank-of-anthos
+                build: <+input>
+    stages:
+        - stage:
+              name: Continuous Integration
+              identifier: Continuous_Integration
+              type: CI
+              spec:
+                  cloneCodebase: true
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          connectorRef: org.GKE
+                          namespace: harness-builds
+                          automountServiceAccountToken: true
+                  execution:
+                      steps:
+                          - step:
+                                type: Run
+                                name: License Check
+                                identifier: License_Check
+                                spec:
+                                    connectorRef: org.Dockerhub
+                                    image: bitnami/git:latest
+                                    shell: Sh
+                                    command: |-
+                                        set -x
+                                        if [[ -d ".git" ]]; then
+                                            rm -rf .git
+                                        fi
+                                        git init
+                                        git add --all
+                                        git -c user.name="CI Bot" -c user.email="<>" commit -m "initial state"
+                                        addlicense ./
+                                        if [[ -n $(git status -s) ]]; then
+                                            exit 1
+                                        fi
