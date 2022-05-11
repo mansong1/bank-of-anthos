@@ -75,7 +75,7 @@ pipeline:
                                       identifier: Java_Unit_Tests
                                       spec:
                                           connectorRef: org.Dockerhub
-                                          image: maven:3.6.2-jdk-11
+                                          image: maven:3.8.3-jdk-17
                                           language: Java
                                           buildTool: Maven
                                           args: test
