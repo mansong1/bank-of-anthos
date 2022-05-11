@@ -55,10 +55,8 @@ pipeline:
                                       spec:
                                           connectorRef: org.Dockerhub
                                           image: maven:3.6.2-jdk-11
-                                          shell: Bash
-                                          command: |-
-                                              source /etc/profile.d/java.sh
-                                              mvn checkstyle:check
+                                          shell: Sh
+                                          command: mvn checkstyle:check
                                 - step:
                                       type: Run
                                       name: Python Checkstyle
