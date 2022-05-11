@@ -54,7 +54,7 @@ pipeline:
                                       identifier: Java_Checkstyle
                                       spec:
                                           connectorRef: org.Dockerhub
-                                          image: maven:3.6.2-jdk-11
+                                          image: maven:3.8.5-openjdk-17
                                           shell: Sh
                                           command: mvn checkstyle:check
                                 - step:
@@ -75,7 +75,7 @@ pipeline:
                                       identifier: Java_Unit_Tests
                                       spec:
                                           connectorRef: org.Dockerhub
-                                          image: maven:3.8.3-jdk-17
+                                          image: maven:3.8.5-openjdk-17
                                           language: Java
                                           buildTool: Maven
                                           args: test
@@ -120,7 +120,7 @@ pipeline:
                                       identifier: Java_Code_Coverage
                                       spec:
                                           connectorRef: org.Dockerhub
-                                          image: maven:3.6.2-jdk-11
+                                          image: maven:3.8.5-openjdk-17
                                           shell: Bash
                                           command: |-
                                               source /etc/profile.d/java.sh
