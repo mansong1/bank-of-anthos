@@ -68,3 +68,48 @@ pipeline:
                                           command: |-
                                               pip install pylint
                                               pylint --rcfile=./.pylintrc ./src/*/*.py
+                          - parallel:
+                                - step:
+                                      type: RunTests
+                                      name: Java Unit Tests
+                                      identifier: Java_Unit_Tests
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: maven:3.6.2-jdk-11
+                                          language: Java
+                                          buildTool: Maven
+                                          args: test
+                                          runOnlySelectedTests: true
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - "**/*.xml"
+                                - step:
+                                      type: Run
+                                      name: Python Unit Tests
+                                      identifier: Python_Unit_Tests
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: python:latest
+                                          shell: Sh
+                                          command: |-
+                                              set -x
+                                              for SERVICE in "contacts" "userservice"; do
+                                                  echo "testing $SERVICE..."
+                                                  # save current working dir to memory and cd to src/$SERVICE
+                                                  pushd src/$SERVICE
+                                                  python3 -m venv $HOME/venv-$SERVICE
+                                                  source $HOME/venv-$SERVICE/bin/activate
+                                                  pip install --upgrade pip
+                                                  pip install -r requirements.txt
+                                                  python -m pytest -v -p no:warnings --junitxml="result.xml"
+                                                  deactivate
+                                                  # return to previously saved path
+                                                  popd
+                                              done
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - "**/*.xml"
