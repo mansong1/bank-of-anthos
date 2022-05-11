@@ -32,7 +32,7 @@ pipeline:
                                 spec:
                                     connectorRef: org.Dockerhub
                                     image: solsson/addlicense
-                                    shell: Bash
+                                    shell: Sh
                                     command: |-
                                         apt-get update -y && apt-get install golang -y
                                         go install github.com/google/addlicense@latest
