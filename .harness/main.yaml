@@ -31,7 +31,7 @@ pipeline:
                                 identifier: License_Check
                                 spec:
                                     connectorRef: org.Dockerhub
-                                    image: bitnami/git:latest
+                                    image: solsson/addlicense
                                     shell: Bash
                                     command: |-
                                         apt-get update -y && apt-get install golang -y
