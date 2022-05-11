@@ -92,7 +92,7 @@ pipeline:
                                       spec:
                                           connectorRef: org.Dockerhub
                                           image: python:latest
-                                          shell: Sh
+                                          shell: Bash
                                           command: |-
                                               set -x
                                               for SERVICE in "contacts" "userservice"; do
@@ -113,3 +113,25 @@ pipeline:
                                               spec:
                                                   paths:
                                                       - "**/*.xml"
+                          - step:
+                                type: Run
+                                name: Python Code Coverage
+                                identifier: Python_Code_Coverage
+                                spec:
+                                    connectorRef: org.Dockerhub
+                                    image: python:latest
+                                    shell: Bash
+                                    command: |-
+                                        for SERVICE in "contacts" "userservice"; do
+                                            echo "testing $SERVICE..."
+                                            # save current working dir to memory and cd to src/$SERVICE
+                                            pushd src/$SERVICE
+                                            python3 -m venv $HOME/venv-$SERVICE
+                                            source $HOME/venv-$SERVICE/bin/activate
+                                            pip install --upgrade pip
+                                            pip install -r requirements.txt
+                                            python -m pytest --cov=./ tests/
+                                            deactivate
+                                            # return to previously saved path
+                                            popd
+                                        done
