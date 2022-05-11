@@ -47,14 +47,26 @@ pipeline:
                                         if [[ -n $(git status -s) ]]; then
                                             exit 1
                                         fi
-                          - step:
-                                type: Run
-                                name: Java Checkstyle
-                                identifier: Java_Checkstyle
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: maven:3.6.2-jdk-11
-                                    shell: Sh
-                                    command: |-
-                                        source /etc/profile.d/java.sh
-                                        mvn checkstyle:check
+                          - parallel:
+                                - step:
+                                      type: Run
+                                      name: Java Checkstyle
+                                      identifier: Java_Checkstyle
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: maven:3.6.2-jdk-11
+                                          shell: Sh
+                                          command: |-
+                                              source /etc/profile.d/java.sh
+                                              mvn checkstyle:check
+                                - step:
+                                      type: Run
+                                      name: Python Checkstyle
+                                      identifier: Python_Checkstyle
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: python:latest
+                                          shell: Sh
+                                          command: |-
+                                              pip install pylint
+                                              pylint --rcfile=./.pylintrc ./src/*/*.py
