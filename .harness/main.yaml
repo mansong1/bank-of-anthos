@@ -55,7 +55,7 @@ pipeline:
                                       spec:
                                           connectorRef: org.Dockerhub
                                           image: maven:3.6.2-jdk-11
-                                          shell: Sh
+                                          shell: Bash
                                           command: |-
                                               source /etc/profile.d/java.sh
                                               mvn checkstyle:check
