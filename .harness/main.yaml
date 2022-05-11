@@ -113,25 +113,50 @@ pipeline:
                                               spec:
                                                   paths:
                                                       - "**/*.xml"
-                          - step:
-                                type: Run
-                                name: Python Code Coverage
-                                identifier: Python_Code_Coverage
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: python:latest
-                                    shell: Bash
-                                    command: |-
-                                        for SERVICE in "contacts" "userservice"; do
-                                            echo "testing $SERVICE..."
-                                            # save current working dir to memory and cd to src/$SERVICE
-                                            pushd src/$SERVICE
-                                            python3 -m venv $HOME/venv-$SERVICE
-                                            source $HOME/venv-$SERVICE/bin/activate
-                                            pip install --upgrade pip
-                                            pip install -r requirements.txt
-                                            python -m pytest --cov=./ tests/
-                                            deactivate
-                                            # return to previously saved path
-                                            popd
-                                        done
+                          - parallel:
+                                - step:
+                                      type: Run
+                                      name: Java Code Coverage
+                                      identifier: Java_Code_Coverage
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: maven:3.6.2-jdk-11
+                                          shell: Bash
+                                          command: |-
+                                              source /etc/profile.d/java.sh
+                                              for SERVICE in "balancereader" "ledgerwriter" "transactionhistory"; do
+                                                  echo "checking $SERVICE..."
+                                                  # save current working dir to memory and cd to src/$SERVICE
+                                                  pushd src/$SERVICE
+                                                  mvn jacoco:report
+                                                  echo "Coverage for $SERVICE:"
+                                                  awk -F, \
+                                                  '{ instructions += $4 + $5; covered += $5 } END \
+                                                  { print covered, "/", instructions, " instructions covered"; \
+                                                  print int(100*covered/instructions), "% covered" }' \
+                                                  target/site/jacoco/jacoco.csv
+                                                  # return to previously saved path
+                                                  popd
+                                              done
+                                - step:
+                                      type: Run
+                                      name: Python Code Coverage
+                                      identifier: Python_Code_Coverage
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: python:latest
+                                          shell: Bash
+                                          command: |-
+                                              for SERVICE in "contacts" "userservice"; do
+                                                  echo "testing $SERVICE..."
+                                                  # save current working dir to memory and cd to src/$SERVICE
+                                                  pushd src/$SERVICE
+                                                  python3 -m venv $HOME/venv-$SERVICE
+                                                  source $HOME/venv-$SERVICE/bin/activate
+                                                  pip install --upgrade pip
+                                                  pip install -r requirements.txt
+                                                  python -m pytest --cov=./ tests/
+                                                  deactivate
+                                                  # return to previously saved path
+                                                  popd
+                                              done
