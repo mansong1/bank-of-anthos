@@ -34,9 +34,6 @@ pipeline:
                                     image: solsson/addlicense
                                     shell: Sh
                                     command: |-
-                                        apt-get update -y && apt-get install golang -y
-                                        go install github.com/google/addlicense@latest
-
                                         set -x
                                         if [[ -d ".git" ]]; then
                                             rm -rf .git
