@@ -23,6 +23,7 @@ pipeline:
                           connectorRef: org.GKE
                           namespace: harness-builds
                           automountServiceAccountToken: true
+                          nodeSelector: {}
                   execution:
                       steps:
                           - step:
@@ -123,6 +124,7 @@ pipeline:
                                           image: maven:3.8.5-openjdk-17
                                           shell: Bash
                                           command: |-
+                                              source /etc/profile.d/java.sh
                                               for SERVICE in "balancereader" "ledgerwriter" "transactionhistory"; do
                                                   echo "checking $SERVICE..."
                                                   # save current working dir to memory and cd to src/$SERVICE
